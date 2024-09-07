@@ -1,21 +1,34 @@
-// En este archivo no utilizamos el evento "DOMContentLoaded", ya que se colocó el atributo "defer" en la importación del script,
-// que nos soluciona el problema de los elementos no cargados del DOM. Más info => https://www.w3schools.com/tags/att_script_defer.asp
+// Constante que apunta al archivo JSON con los datos
+const DATA_URL = "json/data.json";
 
-const DATA_URL = "json/data.json"; // URL que contiene los datos que queremos mostrar
+// Traemos el contenedor desde el DOM
+const container = document.getElementById("container");
 
-const container = document.getElementById("container"); // "Traemos" utilizando el DOM el div de id "container" para colocar la información en él
-
-/**
- * Función que recibe por parámetro un array con los datos que se mostrarán en el DOM
- * Los datos se mostrarán dentro del div de id "container" y por cada ítem se está creando un nuevo párrafo donde se
- * imprime el campo "name" y el campo "lastname" separados por un espacio
- */
+// Función para mostrar los nombres y apellidos de los estudiantes en el DOM
 function showData(dataArray) {
-  // El for itera sobre los elementos del array
+  // Iteramos sobre cada ítem en el array de datos
   for (const item of dataArray) {
-    // En la siguiente línea se utilizan "backticks" para armar el String. Más info => https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Template_literals
-    container.innerHTML += `<p> ${item.name} ${item.lastname} </p>`; // Se concatena cada párrafo de la manera que queremos mostrarlo al innerHTML del contenedor
+    // Agregamos cada nombre y apellido como un párrafo dentro del contenedor
+    container.innerHTML += `<p>${item.name} ${item.lastname}</p>`;
   }
 }
 
-// Escribe el código necesario para realizar el fetch al archivo con los datos y mostrar los estudiantes con la función showData
+// Realizamos el fetch al archivo JSON
+
+fetch(DATA_URL)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Error al cargar el archivo JSON");
+    }
+    return response.json(); // Parseamos la respuesta en formato JSON
+  })
+  .then(data => {
+    console.log(data); // Depuración: mostramos los datos en consola para verificar
+    showData(data.students); // Pasamos el array de estudiantes a la función showData
+  })
+  .catch(error => {
+    console.error("Error al cargar los datos:", error); // En caso de error, lo mostramos en la consola
+  });
+
+
+
